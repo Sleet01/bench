@@ -5007,35 +5007,47 @@ window.PILOTS = [
             skill: 4,
             points: 28,
             upgrades: [Unit.TORPEDO],
-            init: function() {
+            init: function() {                
+                // Deferred / Resolve / Promise version
                 var self=this;
-                this.wrap_after("endsetupphase",this,function() {
-                    var p=[];
-                    for (var i in squadron){
-                        if (squadron[i].team!=this.team) 
-                            p.push(squadron[i]);
-                    };
-                    var lock=$.Deferred();
-                    this.selectunit( //Gives us skip functionality
-                        p,
-			function(p,k) {
-                            this.log("select unit for condition [%0]","Shadowed");
-                            new Condition(p[k],this,"Shadowed");
-                            lock.resolve();
-                        }.bind(this),
-                        ["select unit for condition (or self to cancel) [%0]",self.name],
-                        true); //somehow, "noskip" == allow skip
-                });
+                var selectForCondition = function(esup){ //esup passed in from endsetupphase()
+                    var selected=$.Deferred();
+                    esup.then(function() {
+                        var p=[];
+                        for (var i in squadron){
+                            if (squadron[i].team!=this.team)
+                                p.push(squadron[i]);
+                        };
+                        this.selectunit(
+                            p,
+                            function(p,k){
+                                this.log("selected [%0] for condition [%1]",p[k].name,"Shadowed");
+                                new Condition(p[k],this,"Shadowed");
+                                selected.resolve();
+                            }.bind(this),
+                            ["Select unit for condition (or self to cancel) [%0]",self.name],
+                            true
+                        );
+                    }.bind(this));
+                    return selected.promise();
+                };
+                this.wrap_after("endsetupphase", this, selectForCondition);
+                
+                // Working but messy
 //                this.wrap_after("endsetupphase",this,function() {
 //                    var p=[];
-//                    for (var i in squadron)
-//                        if (squadron[i].team!=this.team) p.push(squadron[i]);
-//                    if (p.length>0) {
-//                        this.log("select unit for condition [%0]","Shadowed");
-//                        this.resolveactionselection(p,function(k) {
+//                    for (var i in squadron){
+//                        if (squadron[i].team!=this.team) 
+//                            p.push(squadron[i]);
+//                    };
+//                    this.selectunit( //Gives us skip functionality
+//                        p,
+//			function(p,k) {
+//                            this.log("select unit for condition [%0]","Shadowed");
 //                            new Condition(p[k],this,"Shadowed");
-//                        }.bind(this));
-//                    }
+//                        }.bind(this),
+//                        ["select unit for condition (or self to cancel) [%0]",self.name],
+//                        true); //somehow, "noskip" == allow skip
 //                });
             }
 	},

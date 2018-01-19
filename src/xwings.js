@@ -426,6 +426,15 @@ function nextplanning() {
 		 activeunit.doplan();
 	     });
 }
+function nextendsetup() {
+    nextunit(function(t) { return true;},
+             function() { if (skillturn<13) skillturn++; },
+             function() { return enablenextphase(); },
+             function() {
+                 activeunit.select();
+                 activeunit.endsetupphase();
+             });
+}
 function getattackresult() {
     var h=$(".hitreddice").length;
     var c=$(".criticalreddice").length;
@@ -1106,7 +1115,12 @@ function endsetupphase() {
     $("#positiondial").hide();
     for (var i=0; i<OBSTACLES.length; i++) OBSTACLES[i].unDrag();
     HISTORY=[];
-    for (var i in squadron) squadron[i].endsetupphase();
+//    for (var i in squadron) {
+//        var promise = squadron[i].endsetupphase();
+//        if (!(promise===null || typeof promise === "undefined")){
+//            promise.done();
+//        }
+//    }
 }
 function nextphase() {
     var i;
@@ -1147,6 +1161,15 @@ function nextphase() {
 	/*ZONE[0].attr({fillOpacity:0});*/
 	/*ZONE[1].attr({fillOpacity:0});*/
 	$(".imagebg").hide();
+        
+        //subphase=END_PHASE
+        skillturn=0;
+	filltabskill();
+        for (i in squadron){
+            squadron[i].endsetupphase().progress(nextendsetup);
+        }
+	barrier(nextendsetup);
+        
 	endsetupphase();
 	/*
 	if (REPLAY.length>0) {
@@ -1156,6 +1179,7 @@ function nextphase() {
 
 	}*/
 	//$(".permalink").hide();
+                
 	break;
     case PLANNING_PHASE:
 	$("#maneuverdial").hide();
@@ -1397,7 +1421,7 @@ function setphase(cannotreplay) {
 	$("#savebtn").hide();
 	for (i in squadron) squadron[i].beginsetupphase();
 	if (cannotreplay!=true) startreplayall();
-	break;
+        break;
     case PLANNING_PHASE: 
 	active=0;
 	/* For actions of all ships */

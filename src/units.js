@@ -733,6 +733,7 @@ Unit.prototype = {
 	return this.dial;
     },
     doplan: function() { this.showdial(); return this.deferred; },
+    
     getdialstring: function() {
 	var m=[];
 	var str="";
@@ -3217,7 +3218,10 @@ Unit.prototype = {
 	return this.newlock();
     },
     endsetupphase: function() {
-	//this.actionbarrier();
+        //this.actionbarrier();
+        //return this.newlock();  // Need a lock for each ship for blocking selections
+        var esup=$.Deferred();
+	return esup.resolve();
     },
     beginplanningphase: function() {
 	this.actionsdone=[];
