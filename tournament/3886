@@ -827,7 +827,10 @@
       }, 
       {
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> origin/gh-pages
         "list": {
           "faction": "scum", 
           "pilots": [
@@ -885,7 +888,10 @@
           }, 
           "version": "4.2.0"
         }, 
+<<<<<<< HEAD
 >>>>>>> refs/remotes/origin/devel
+=======
+>>>>>>> origin/gh-pages
         "mov": 759, 
         "name": "Jim Frank", 
         "rank": {
