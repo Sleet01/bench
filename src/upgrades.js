@@ -574,9 +574,10 @@ Upgrade.prototype={
                     }
                 }
             }
-            if(installedtype > typeslots.length){ // Check if there are enough slots for all upgrades of this.type
+            if(phase===SELECT_PHASE && installedtype > typeslots.length){ // Check if there are enough slots for all upgrades of this.type
                 // If not, just uninstall this and NOTHING ELSE!
-                removeupgrade(sh,typeslots[typeslots.length-2].index,this.id);                
+                var removeIndex=(typeslots.length-2>=0)?typeslots.length-2:0;
+                removeupgrade(sh,typeslots[removeIndex].index,this.id);                
 //                for (j=0; j<sh.upgradetype.length; j++){
 //                    if (sh.upgradetype[j]==this.type&&(sh.upg[j]<0||UPGRADES[sh.upg[j]].name!=this.name)) {
 //                        break;
